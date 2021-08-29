@@ -4,8 +4,9 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"os"
 
+	"github.com/maldan/gam-app-timeman/internal/app/timeman/api"
+	"github.com/maldan/gam-app-timeman/internal/app/timeman/core"
 	"github.com/maldan/go-restserver"
 )
 
@@ -19,7 +20,7 @@ func Start(frontFs embed.FS) {
 	var dataDir = flag.String("dataDir", "db", "Data Directory")
 	_ = flag.String("appId", "id", "App id")
 	flag.Parse()
-	
+
 	// Set
 	core.DataDir = *dataDir
 
@@ -27,7 +28,8 @@ func Start(frontFs embed.FS) {
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"main":  api.MainApi{},
+			"task": api.TaskApi{},
+			"day":  api.DayApi{},
 		},
 	})
 }
