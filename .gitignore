@@ -1,2 +1,6 @@
 /application*.zip
 /app*
+/db
+/.history
+tasks.json
+sleep.json 

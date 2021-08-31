@@ -4,8 +4,9 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"os"
 
+	"github.com/maldan/gam-app-timeman/internal/app/timeman/api"
+	"github.com/maldan/gam-app-timeman/internal/app/timeman/core"
 	"github.com/maldan/go-restserver"
 )
 
@@ -19,15 +20,27 @@ func Start(frontFs embed.FS) {
 	var dataDir = flag.String("dataDir", "db", "Data Directory")
 	_ = flag.String("appId", "id", "App id")
 	flag.Parse()
-	
+
 	// Set
 	core.DataDir = *dataDir
+
+	/*m := make([]core.Sleep, 0)
+	cmhp_file.ReadJSON("./sleep.json", &m)
+	fff := api.SleepApi{}
+	for _, xx := range m {
+		loc, _ := time.LoadLocation("Europe/Moscow")
+		xx.Start = xx.Start.In(loc)
+		xx.Stop = xx.Stop.In(loc)
+		fff.PostIndex(xx)
+	}
+	fmt.Println(2)*/
 
 	// Init server
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"main":  api.MainApi{},
+			"task":  api.TaskApi{},
+			"sleep": api.SleepApi{},
 		},
 	})
 }

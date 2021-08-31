@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import Moment from 'moment';
 
 export default defineComponent({
   components: {},
@@ -13,6 +14,7 @@ export default defineComponent({
     return {
       // @ts-ignore
       API_URL: process.env.VUE_APP_API_URL || `${window.location.origin}/api`,
+      moment: Moment,
     };
   },
 });
