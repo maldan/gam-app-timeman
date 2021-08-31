@@ -24,12 +24,22 @@ func Start(frontFs embed.FS) {
 	// Set
 	core.DataDir = *dataDir
 
+	/*m := make([]core.Task, 0)
+	cmhp_file.ReadJSON("./tasks.json", &m)
+	fff := api.TaskApi{}
+	for _, xx := range m {
+		loc, _ := time.LoadLocation("Europe/Moscow")
+		xx.Start = xx.Start.In(loc)
+		xx.Stop = xx.Stop.In(loc)
+		fff.PostIndex(xx)
+	}
+	fmt.Println(2)*/
+
 	// Init server
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
 			"task": api.TaskApi{},
-			"day":  api.DayApi{},
 		},
 	})
 }
