@@ -24,9 +24,9 @@ func Start(frontFs embed.FS) {
 	// Set
 	core.DataDir = *dataDir
 
-	/*m := make([]core.Task, 0)
-	cmhp_file.ReadJSON("./tasks.json", &m)
-	fff := api.TaskApi{}
+	/*m := make([]core.Sleep, 0)
+	cmhp_file.ReadJSON("./sleep.json", &m)
+	fff := api.SleepApi{}
 	for _, xx := range m {
 		loc, _ := time.LoadLocation("Europe/Moscow")
 		xx.Start = xx.Start.In(loc)
@@ -39,7 +39,8 @@ func Start(frontFs embed.FS) {
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"task": api.TaskApi{},
+			"task":  api.TaskApi{},
+			"sleep": api.SleepApi{},
 		},
 	})
 }

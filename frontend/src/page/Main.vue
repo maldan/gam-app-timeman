@@ -36,6 +36,7 @@ export default defineComponent({
   .body {
     margin-top: 10px;
     display: flex;
+    height: calc(100% - 60px);
   }
 }
 </style>

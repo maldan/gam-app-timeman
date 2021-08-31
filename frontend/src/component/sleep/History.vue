@@ -2,7 +2,10 @@
   <div class="history">
     <div class="block hour_map">
       <!-- Header -->
-      <div class="header">Hour Map</div>
+      <div class="header">
+        Hour Map
+        <img @click="isShowAddForm = true" class="clickable" src="../../asset/add.svg" alt="" />
+      </div>
 
       <div class="time" v-for="(list, i) in hourMap" :key="i">
         <div class="hour">{{ ('0' + i).slice(-2) }}</div>
@@ -18,18 +21,6 @@
             }"
           ></div>
         </div>
-      </div>
-    </div>
-
-    <div class="block task_list">
-      <!-- Header -->
-      <div class="header">
-        History
-        <img @click="isShowAddForm = true" class="clickable" src="../../asset/add.svg" alt="" />
-      </div>
-
-      <div class="task" v-for="(x, i) in list" :key="x">
-        <Task :item="x" :nextItem="list[i + 1]" :date="date" />
       </div>
     </div>
 
@@ -59,7 +50,7 @@ export default defineComponent({
   },
   methods: {
     async refresh() {
-      this.list = await RestApi.task.getByDay(Moment(this.date).format('YYYY-MM-DD'));
+      this.list = await RestApi.sleep.getByDay(Moment(this.date).format('YYYY-MM-DD'));
       this.hourMap.length = 0;
       for (let i = 0; i < 24; i++) {
         this.hourMap[i] = [];
@@ -72,8 +63,6 @@ export default defineComponent({
             new Date(this.list[i].start.split('T')[0] + ' 00:00:00').getTime() / 1000) /
           3600;
         let duration = (stop.getTime() / 1000 - start.getTime() / 1000) / 3600;
-
-        // console.log(absTime, duration);
 
         let hour = ~~absTime;
         let offset = absTime - hour;
@@ -97,16 +86,6 @@ export default defineComponent({
             break;
           }
         }
-
-        /*let hourOffset = 0;
-        while (duration > 0) {
-          this.hourMap[~~(absTime / 3600) + hourOffset] += duration;
-          if (this.hourMap[~~(absTime / 3600) + hourOffset] > 1) {
-            this.hourMap[~~(absTime / 3600) + hourOffset] = 1;
-          }
-          duration -= 1;
-          hourOffset += 1;
-        }*/
       }
     },
   },
@@ -132,9 +111,10 @@ export default defineComponent({
 
   .hour_map {
     margin-right: 10px;
-    width: 160px;
+    width: 220px;
     overflow-y: auto;
-    height: 100%;
+    height: max-content;
+    max-height: 100%;
 
     .time {
       color: #999999;
@@ -169,13 +149,6 @@ export default defineComponent({
         }
       }
     }
-  }
-
-  .task_list {
-    margin-right: 10px;
-    width: 260px;
-    overflow-y: auto;
-    height: 100%;
   }
 }
 </style>

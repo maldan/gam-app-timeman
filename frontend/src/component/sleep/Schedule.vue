@@ -115,11 +115,11 @@ export default defineComponent({
       if (power === undefined) return 'transparent';
       if (power <= 0) return '#e2e2e223';
 
-      let p = power / 3600 / 6;
+      let p = power / 3600 / 8;
       if (p < 0.3) {
         p = 0.3;
       }
-      return `rgba(39, 255, 0, ${p})`;
+      return `rgba(92, 40, 92, ${p})`;
     },
     async refresh() {
       this.days.length = 0;
@@ -138,7 +138,7 @@ export default defineComponent({
       }
 
       // @ts-ignore
-      this.map = await RestApi.task.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
+      this.map = await RestApi.sleep.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
       this.total = 0;
       for (let x in this.map) {
         this.total += ~~(this.map as any)[x] as number;
@@ -193,14 +193,15 @@ export default defineComponent({
       color: #acacac;
 
       .cell {
-        width: 12px;
-        height: 12px;
+        width: 11px;
+        height: 11px;
         background: #2b2b2b;
         font-size: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 2px;
+        border: 1px solid #ca6f0000;
 
         &.null {
           pointer-events: none;
@@ -208,7 +209,7 @@ export default defineComponent({
         }
 
         &.selected {
-          border: 1px solid #ca6f00;
+          border: 1px solid #ffa639;
         }
 
         &.today::before {

@@ -29,7 +29,7 @@ export default defineComponent({
     return {
       items: [
         { name: 'Main', url: '/' },
-        { name: 'Sleep', url: '/training' },
+        { name: 'Sleep', url: '/sleep' },
       ],
     };
   },
