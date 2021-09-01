@@ -4,17 +4,7 @@
 
     <div class="main_body">
       <History :date="currentDate" @update="description = $event" />
-      <div style="flex: 1">
-        <Schedule @select="(currentDate = $event), refresh()" />
-        <div class="block" style="margin-top: 10px">
-          <div class="header">Descriprion</div>
-          <div
-            class="body"
-            style="color: #999999; line-height: 26px"
-            v-html="description.join('<br><br>')"
-          ></div>
-        </div>
-      </div>
+      <Schedule @select="(currentDate = $event), refresh()" />
     </div>
   </div>
 </template>
@@ -24,8 +14,6 @@ import { defineComponent } from 'vue';
 import Header from '../component/Header.vue';
 import History from '../component/sleep/History.vue';
 import Schedule from '../component/sleep/Schedule.vue';
-import { RestApi } from '../util/RestApi';
-import Moment from 'moment';
 
 export default defineComponent({
   components: { Header, History, Schedule },
@@ -33,21 +21,11 @@ export default defineComponent({
     this.refresh();
   },
   methods: {
-    async refresh() {
-      // @ts-ignore
-      const list = await RestApi.sleep.getByDay(Moment(this.currentDate).format('YYYY-MM-DD'));
-      this.description.length = 0;
-      for (let i = 0; i < list.length; i++) {
-        if (list[i].description) {
-          this.description.push(list[i].description.replace(/\n/g, '<br>'));
-        }
-      }
-    },
+    async refresh() {},
   },
   data: () => {
     return {
       currentDate: new Date(),
-      description: [] as any[],
     };
   },
 });

@@ -14,6 +14,25 @@ export const RestApi = {
         })
       ).data.response;
     },
+    async update(id: string, name: string, description: string, start: string, stop: string) {
+      return (
+        await Axios.patch(`${API_URL}/task`, {
+          id,
+          name,
+          description,
+          start,
+          stop,
+        })
+      ).data.response;
+    },
+
+    async get(id: string) {
+      return (await Axios.get(`${API_URL}/task?id=${id}`)).data.response;
+    },
+
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/task?id=${id}`)).data.response;
+    },
 
     async getByDay(date: string): Promise<any> {
       return (await Axios.get(`${API_URL}/task/byDay?date=${date}`)).data.response;
@@ -33,6 +52,25 @@ export const RestApi = {
           stop,
         })
       ).data.response;
+    },
+
+    async update(id: string, description: string, start: string, stop: string) {
+      return (
+        await Axios.patch(`${API_URL}/sleep`, {
+          id,
+          description,
+          start,
+          stop,
+        })
+      ).data.response;
+    },
+
+    async get(id: string) {
+      return (await Axios.get(`${API_URL}/sleep?id=${id}`)).data.response;
+    },
+
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/sleep?id=${id}`)).data.response;
     },
 
     async getByDay(date: string): Promise<any[]> {

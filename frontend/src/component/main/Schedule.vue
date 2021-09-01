@@ -8,7 +8,7 @@
             <div>{{ x }}</div>
             <div style="display: grid; margin-top: 10px; grid-template-columns: repeat(7, 15px)">
               <div
-                @click="$emit('select', z), (date = z)"
+                @click="$emit('select', z), (date = z), changeDate()"
                 class="clickable"
                 :class="[
                   $style.cell,
@@ -32,32 +32,45 @@
           </div>
         </div>
 
-        <div style="margin-top: 15px; color: #979797; display: flex; align-items: center">
+        <div
+          style="
+            display: flex;
+            margin-top: 15px;
+            color: #979797;
+            display: flex;
+            align-items: center;
+          "
+        >
           <div style="margin-right: 15px">
-            Date: {{ $root.moment(date).format('DD MMM YYYY') }} | Total:
-            {{ totalTime(total) }}
+            <div><b>Date:</b> {{ $root.moment(date).format('DD MMM YYYY') }}</div>
+            <div><b>Total Year:</b> {{ totalTime(total) }}</div>
+            <div><b>Total Month:</b> {{ totalTime(totalMonth) }}</div>
+            <div><b>Total Day:</b> {{ totalTime(totalDay) }}</div>
           </div>
 
-          <button
-            v-for="x in [-4, -3, -2, -1, 0]"
-            :class="[
-              $style.change_year,
-              date.getFullYear() === new Date().getFullYear() + x ? $style.selected : '',
-            ]"
-            class="clickable"
-            :key="x"
-            @click="
-              (date = new Date(
-                new Date().getFullYear() + x,
-                new Date().getMonth(),
-                new Date().getDate(),
-              )),
-                $emit('select', date),
-                refresh()
-            "
-          >
-            {{ new Date().getFullYear() + x }}
-          </button>
+          <div style="margin-left: auto">
+            <button
+              v-for="x in [-4, -3, -2, -1, 0]"
+              :class="[
+                $style.change_year,
+                date.getFullYear() === new Date().getFullYear() + x ? $style.selected : '',
+              ]"
+              class="clickable"
+              :key="x"
+              @click="
+                (date = new Date(
+                  new Date().getFullYear() + x,
+                  new Date().getMonth(),
+                  new Date().getDate(),
+                )),
+                  $emit('select', date),
+                  refresh(),
+                  changeDate()
+              "
+            >
+              {{ new Date().getFullYear() + x }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -78,27 +91,32 @@ export default defineComponent({
   components: {},
   async mounted() {
     this.refresh();
+    this.changeDate();
 
     this.keyboardEvent = document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         // @ts-ignore
         this.date = Moment(this.date).add(1, 'day').toDate();
         this.$emit('select', this.date);
+        this.changeDate();
       }
       if (e.key === 'ArrowLeft') {
         // @ts-ignore
         this.date = Moment(this.date).add(-1, 'day').toDate();
         this.$emit('select', this.date);
+        this.changeDate();
       }
       if (e.key === 'ArrowUp') {
         // @ts-ignore
         this.date = Moment(this.date).add(-7, 'day').toDate();
         this.$emit('select', this.date);
+        this.changeDate();
       }
       if (e.key === 'ArrowDown') {
         // @ts-ignore
         this.date = Moment(this.date).add(7, 'day').toDate();
         this.$emit('select', this.date);
+        this.changeDate();
       }
     });
   },
@@ -119,7 +137,7 @@ export default defineComponent({
       if (p < 0.3) {
         p = 0.3;
       }
-      return `rgba(39, 255, 0, ${p})`;
+      return `rgba(64, 64, 192, ${p})`;
     },
     async refresh() {
       this.days.length = 0;
@@ -142,6 +160,16 @@ export default defineComponent({
       this.total = 0;
       for (let x in this.map) {
         this.total += ~~(this.map as any)[x] as number;
+      }
+    },
+    changeDate() {
+      // @ts-ignore
+      this.totalDay = ~~this.map[Moment(this.date).format('YYYY-MM-DD')];
+      this.totalMonth = 0;
+      const range = this.getDates(this.date.getMonth());
+      for (let i = 0; i < range.length; i++) {
+        // @ts-ignore
+        this.totalMonth += ~~this.map[Moment(range[i]).format('YYYY-MM-DD')];
       }
     },
     getDates(month: number): Date[] {
@@ -170,6 +198,8 @@ export default defineComponent({
       date: new Date(),
       map: {},
       total: 0,
+      totalMonth: 0,
+      totalDay: 0,
       keyboardEvent: null as any,
     };
   },
@@ -193,14 +223,15 @@ export default defineComponent({
       color: #acacac;
 
       .cell {
-        width: 12px;
-        height: 12px;
+        width: 11px;
+        height: 11px;
         background: #2b2b2b;
         font-size: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 2px;
+        border: 1px solid #ca6f0000;
 
         &.null {
           pointer-events: none;
@@ -208,7 +239,7 @@ export default defineComponent({
         }
 
         &.selected {
-          border: 1px solid #ca6f00;
+          border: 1px solid #ffa639;
         }
 
         &.today::before {

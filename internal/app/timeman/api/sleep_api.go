@@ -94,7 +94,7 @@ func (r SleepApi) DeleteIndex(args core.Sleep) {
 		if id == item.Id {
 			continue
 		}
-		outList = append(outList, item.Id)
+		outList = append(outList, id)
 	}
 
 	// Save stat

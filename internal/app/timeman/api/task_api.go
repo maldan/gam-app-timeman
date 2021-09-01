@@ -1,6 +1,7 @@
 package api
 
 import (
+	"sort"
 	"time"
 
 	"github.com/maldan/gam-app-timeman/internal/app/timeman/core"
@@ -41,6 +42,12 @@ func (r TaskApi) GetByDay(args ArgsDate) []core.Task {
 			out = append(out, task)
 		}
 	}
+
+	// Sort items by date
+	sort.SliceStable(out, func(i, j int) bool {
+		return out[i].Start.Unix() < out[j].Start.Unix()
+	})
+
 	return out
 }
 
@@ -94,7 +101,7 @@ func (r TaskApi) DeleteIndex(args core.Task) {
 		if id == item.Id {
 			continue
 		}
-		outList = append(outList, item.Id)
+		outList = append(outList, id)
 	}
 
 	// Save stat
@@ -106,9 +113,10 @@ func (r TaskApi) DeleteIndex(args core.Task) {
 
 // Update
 func (r TaskApi) PatchIndex(args core.Task) {
+	// Delete previous item
 	r.DeleteIndex(args)
 
-	// Save task
+	// Save new task
 	cmhp_file.WriteJSON(core.DataDir+"/task/item/"+args.Id+".json", &args)
 
 	// Save id list

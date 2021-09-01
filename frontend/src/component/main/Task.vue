@@ -5,6 +5,15 @@
         {{ item.name }}
       </div>
       <div :class="$style.right">{{ $root.moment(item.start).format('HH:mm') }}</div>
+      <div :class="$style.right2">
+        {{
+          $root
+            .moment()
+            .startOf('day')
+            .seconds($root.moment(item.stop).diff($root.moment(item.start), 'seconds'))
+            .format('HH:mm')
+        }}
+      </div>
     </div>
     <div :class="$style.body">
       <div :class="$style.name">
@@ -52,7 +61,7 @@ export default defineComponent({
         return null;
       }
 
-      const a = new Date(this.item.start).getTime() / 1000;
+      const a = new Date(this.item.stop).getTime() / 1000;
       const b = new Date(this.nextItem?.start || new Date()).getTime() / 1000;
       if (b - a < 60 * 5) {
         return null;
@@ -69,12 +78,14 @@ export default defineComponent({
 <style lang="scss" module>
 .block {
   font-size: 15px;
+  margin-bottom: 5px;
 
   .header {
     display: flex;
 
     .left,
-    .right {
+    .right,
+    .right2 {
       padding: 5px 10px;
       border-radius: 6px 6px 0 0;
       color: #b1b1b1;
@@ -94,6 +105,11 @@ export default defineComponent({
 
     .right {
       margin-left: auto;
+    }
+
+    .right2 {
+      margin-left: 10px;
+      color: #caef58;
     }
   }
 

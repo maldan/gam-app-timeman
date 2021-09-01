@@ -29,11 +29,18 @@
       </div>
 
       <div class="task" v-for="(x, i) in list" :key="x">
-        <Task :item="x" :nextItem="list[i + 1]" :date="date" />
+        <Task
+          @edit="(isShowEditForm = true), (itemId = $event)"
+          @delete="remove(x)"
+          :item="x"
+          :nextItem="list[i + 1]"
+          :date="date"
+        />
       </div>
     </div>
 
     <Add :date="date" v-if="isShowAddForm" @close="(isShowAddForm = false), refresh()" />
+    <Edit :id="itemId" v-if="isShowEditForm" @close="(isShowEditForm = false), refresh()" />
   </div>
 </template>
 
@@ -41,6 +48,7 @@
 import { defineComponent } from 'vue';
 import { RestApi } from '../../util/RestApi';
 import Add from './Add.vue';
+import Edit from './Edit.vue';
 import Task from './Task.vue';
 import Moment from 'moment';
 
@@ -48,7 +56,7 @@ export default defineComponent({
   props: {
     date: Object,
   },
-  components: { Add, Task },
+  components: { Add, Edit, Task },
   async mounted() {
     this.refresh();
   },
@@ -67,13 +75,20 @@ export default defineComponent({
       for (let i = 0; i < this.list.length; i++) {
         const start = new Date(this.list[i].start);
         const stop = new Date(this.list[i].stop);
+        const timeZoneOffset = (new Date().getTimezoneOffset() / 60) * -1;
         const absTime =
           (start.getTime() / 1000 -
-            new Date(this.list[i].start.split('T')[0] + ' 00:00:00').getTime() / 1000) /
+            new Date(
+              this.list[i].start.split('T')[0] +
+                'T00:00:00' +
+                (timeZoneOffset > 0
+                  ? `+${('00' + timeZoneOffset).slice(-2)}`
+                  : `${('00' + timeZoneOffset).slice(-2)}`) +
+                ':00',
+            ).getTime() /
+              1000) /
           3600;
         let duration = (stop.getTime() / 1000 - start.getTime() / 1000) / 3600;
-
-        // console.log(absTime, duration);
 
         let hour = ~~absTime;
         let offset = absTime - hour;
@@ -97,24 +112,24 @@ export default defineComponent({
             break;
           }
         }
-
-        /*let hourOffset = 0;
-        while (duration > 0) {
-          this.hourMap[~~(absTime / 3600) + hourOffset] += duration;
-          if (this.hourMap[~~(absTime / 3600) + hourOffset] > 1) {
-            this.hourMap[~~(absTime / 3600) + hourOffset] = 1;
-          }
-          duration -= 1;
-          hourOffset += 1;
-        }*/
+      }
+    },
+    async remove(item: any) {
+      if (confirm('Are you sure you want to delete it?')) {
+        await RestApi.task.delete(item.id);
+        this.refresh();
       }
     },
   },
   data: () => {
     return {
+      isShowAddForm: false,
+      isShowEditForm: false,
+      itemId: '',
+
       hourMap: [] as any[],
       list: [] as any[],
-      isShowAddForm: false,
+
       color: {
         programming: '#b404ca',
         draw: '#af2222',
@@ -132,9 +147,10 @@ export default defineComponent({
 
   .hour_map {
     margin-right: 10px;
-    width: 160px;
+    width: 180px;
     overflow-y: auto;
-    height: 100%;
+    height: max-content;
+    max-height: 100%;
 
     .time {
       color: #999999;
@@ -153,7 +169,7 @@ export default defineComponent({
       }
 
       .bar {
-        height: 20px;
+        height: 10px;
         background: #0e0e0e;
         width: 100%;
         position: relative;
@@ -173,9 +189,10 @@ export default defineComponent({
 
   .task_list {
     margin-right: 10px;
-    width: 260px;
+    width: 280px;
     overflow-y: auto;
-    height: 100%;
+    height: max-content;
+    max-height: 100%;
   }
 }
 </style>

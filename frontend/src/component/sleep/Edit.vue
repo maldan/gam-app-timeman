@@ -13,7 +13,7 @@
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
-        <Button @click="submit()" text="Add" icon="add" style="margin-left: 5px" />
+        <Button @click="submit()" text="Save" icon="add" style="margin-left: 5px" />
       </div>
     </div>
   </div>
@@ -26,30 +26,30 @@ import Button from '../Button.vue';
 import Input from '../Input.vue';
 import TextArea from '../TextArea.vue';
 import Select from '../Select.vue';
+import Moment from 'moment';
 
 export default defineComponent({
   props: {
-    date: Object,
+    id: String,
   },
   components: { Button, Input, Select, TextArea },
-  async mounted() {},
+  async mounted() {
+    const item = await RestApi.sleep.get(this.id + '');
+    this.description = item.description;
+    this.start = Moment(item.start).format('YYYY-MM-DD HH:mm:ss');
+    this.stop = Moment(item.stop).format('YYYY-MM-DD HH:mm:ss');
+  },
   methods: {
     async submit() {
-      await RestApi.sleep.add(this.description, this.start, this.stop);
+      await RestApi.sleep.update(this.id + '', this.description, this.start, this.stop);
       this.$emit('close');
     },
   },
   data() {
-    const moment = (this.$root as any)['moment'];
-    const d = this.date as Date;
-    d.setHours(new Date().getHours());
-    d.setMinutes(new Date().getMinutes());
-    d.setSeconds(new Date().getSeconds());
-
     return {
       description: '',
-      start: moment(d).format('YYYY-MM-DD HH:mm:ss'),
-      stop: moment(d).format('YYYY-MM-DD HH:mm:ss'),
+      start: '',
+      stop: '',
     };
   },
 });
