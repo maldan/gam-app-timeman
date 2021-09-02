@@ -123,6 +123,11 @@ export default defineComponent({
   beforeUnmount() {
     document.removeEventListener('keydown', this.keyboardEvent);
   },
+  watch: {
+    '$root.refreshId'() {
+      this.refresh();
+    },
+  },
   methods: {
     totalTime(time: number) {
       const h = ~~(time / 3600);
@@ -161,6 +166,7 @@ export default defineComponent({
       for (let x in this.map) {
         this.total += ~~(this.map as any)[x] as number;
       }
+      this.changeDate();
     },
     changeDate() {
       // @ts-ignore

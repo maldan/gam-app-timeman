@@ -9,12 +9,17 @@ import Moment from 'moment';
 export default defineComponent({
   components: {},
   async mounted() {},
-  methods: {},
+  methods: {
+    refresh() {
+      this.refreshId = Math.random();
+    },
+  },
   data: () => {
     return {
       // @ts-ignore
       API_URL: process.env.VUE_APP_API_URL || `${window.location.origin}/api`,
       moment: Moment,
+      refreshId: 0,
     };
   },
 });

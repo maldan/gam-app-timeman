@@ -2,15 +2,27 @@
   <div :class="$style.container">
     <div :class="$style.window">
       <Input icon="food" placeholder="Name..." style="margin-bottom: 10px" v-model="name" />
-      <Input
+      <TextArea
         icon="weight"
         placeholder="Description..."
         style="margin-bottom: 10px"
         v-model="description"
       />
 
-      <Input icon="date" placeholder="Start..." style="margin-bottom: 10px" v-model="start" />
-      <Input icon="date" placeholder="Stop..." style="margin-bottom: 10px" v-model="stop" />
+      <Input
+        icon="date"
+        type="datetime-local"
+        placeholder="Start..."
+        style="margin-bottom: 10px"
+        v-model="start"
+      />
+      <Input
+        icon="date"
+        type="datetime-local"
+        placeholder="Stop..."
+        style="margin-bottom: 10px"
+        v-model="stop"
+      />
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
@@ -27,18 +39,19 @@ import Button from '../Button.vue';
 import Input from '../Input.vue';
 import Select from '../Select.vue';
 import Moment from 'moment';
+import TextArea from '../TextArea.vue';
 
 export default defineComponent({
   props: {
     id: String,
   },
-  components: { Button, Input, Select },
+  components: { Button, Input, Select, TextArea },
   async mounted() {
     const task = await RestApi.task.get(this.id + '');
     this.name = task.name;
     this.description = task.description;
-    this.start = Moment(task.start).format('YYYY-MM-DD HH:mm:ss');
-    this.stop = Moment(task.stop).format('YYYY-MM-DD HH:mm:ss');
+    this.start = Moment(task.start).format('YYYY-MM-DDTHH:mm:ss');
+    this.stop = Moment(task.stop).format('YYYY-MM-DDTHH:mm:ss');
   },
   methods: {
     async submit() {

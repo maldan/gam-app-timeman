@@ -39,8 +39,8 @@
       </div>
     </div>
 
-    <Add :date="date" v-if="isShowAddForm" @close="(isShowAddForm = false), refresh()" />
-    <Edit :id="itemId" v-if="isShowEditForm" @close="(isShowEditForm = false), refresh()" />
+    <Add :date="date" v-if="isShowAddForm" @close="(isShowAddForm = false), $root.refresh()" />
+    <Edit :id="itemId" v-if="isShowEditForm" @close="(isShowEditForm = false), $root.refresh()" />
   </div>
 </template>
 
@@ -59,9 +59,14 @@ export default defineComponent({
   components: { Add, Edit, Task },
   async mounted() {
     this.refresh();
+    // @ts-ignore
+    // this.$root.refresh();
   },
   watch: {
     date(value: Date) {
+      this.refresh();
+    },
+    '$root.refreshId'() {
       this.refresh();
     },
   },
@@ -117,7 +122,8 @@ export default defineComponent({
     async remove(item: any) {
       if (confirm('Are you sure you want to delete it?')) {
         await RestApi.task.delete(item.id);
-        this.refresh();
+        // @ts-ignore
+        this.$root.refresh();
       }
     },
   },

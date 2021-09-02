@@ -17,7 +17,7 @@
     </div>
     <div :class="$style.body">
       <div :class="$style.name">
-        {{ item.description }}
+        <div v-html="item.description.replace(/\n/g, '<br>')"></div>
         <img
           @click="$emit('edit', item.id)"
           class="clickable"
