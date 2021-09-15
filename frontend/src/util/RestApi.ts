@@ -1,6 +1,7 @@
 import Axios from 'axios';
 
 const API_URL = process.env.VUE_APP_API_URL || `${window.location.origin}/api`;
+const SYSTEM_URL = process.env.VUE_APP_SYSTEM_URL || `${window.location.origin}/system`;
 
 export const RestApi = {
   task: {
@@ -79,6 +80,12 @@ export const RestApi = {
 
     async getYearMap(date: string): Promise<any> {
       return (await Axios.get(`${API_URL}/sleep/yearMap?date=${date}`)).data.response;
+    },
+  },
+
+  config: {
+    async get() {
+      return (await Axios.get(`${SYSTEM_URL}/config`)).data.response;
     },
   },
 };

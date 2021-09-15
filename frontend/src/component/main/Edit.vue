@@ -9,19 +9,14 @@
         v-model="description"
       />
 
+      <Input icon="date" placeholder="Start..." style="margin-bottom: 10px" v-model="start" />
       <Input
         icon="date"
-        type="datetime-local"
-        placeholder="Start..."
-        style="margin-bottom: 10px"
-        v-model="start"
-      />
-      <Input
-        icon="date"
-        type="datetime-local"
         placeholder="Stop..."
         style="margin-bottom: 10px"
         v-model="stop"
+        functionIcon="date"
+        :functionClick="getCurrentDate"
       />
 
       <div style="display: flex">
@@ -50,13 +45,16 @@ export default defineComponent({
     const task = await RestApi.task.get(this.id + '');
     this.name = task.name;
     this.description = task.description;
-    this.start = Moment(task.start).format('YYYY-MM-DDTHH:mm:ss');
-    this.stop = Moment(task.stop).format('YYYY-MM-DDTHH:mm:ss');
+    this.start = Moment(task.start).format('YYYY-MM-DD HH:mm:ss');
+    this.stop = Moment(task.stop).format('YYYY-MM-DD HH:mm:ss');
   },
   methods: {
     async submit() {
       await RestApi.task.update(this.id + '', this.name, this.description, this.start, this.stop);
       this.$emit('close');
+    },
+    getCurrentDate() {
+      return Moment().format('YYYY-MM-DD HH:mm:ss');
     },
   },
   data() {

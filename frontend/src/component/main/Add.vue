@@ -9,19 +9,14 @@
         v-model="description"
       />
 
+      <Input icon="date" placeholder="Start..." style="margin-bottom: 10px" v-model="start" />
       <Input
         icon="date"
-        type="datetime-local"
-        placeholder="Start..."
-        style="margin-bottom: 10px"
-        v-model="start"
-      />
-      <Input
-        icon="date"
-        type="datetime-local"
         placeholder="Stop..."
         style="margin-bottom: 10px"
         v-model="stop"
+        functionIcon="date"
+        :functionClick="getCurrentDate"
       />
 
       <div style="display: flex">
@@ -39,6 +34,7 @@ import Button from '../Button.vue';
 import Input from '../Input.vue';
 import Select from '../Select.vue';
 import TextArea from '../TextArea.vue';
+import Moment from 'moment';
 
 export default defineComponent({
   props: {
@@ -51,6 +47,9 @@ export default defineComponent({
       await RestApi.task.add(this.name, this.description, this.start, this.stop);
       this.$emit('close');
     },
+    getCurrentDate() {
+      return Moment().format('YYYY-MM-DD HH:mm:ss');
+    },
   },
   data() {
     const moment = (this.$root as any)['moment'];
@@ -62,8 +61,8 @@ export default defineComponent({
     return {
       name: '',
       description: '',
-      start: moment(d).format('YYYY-MM-DDTHH:mm:ss'),
-      stop: moment(d).format('YYYY-MM-DDTHH:mm:ss'),
+      start: moment(d).format('YYYY-MM-DD HH:mm:ss'),
+      stop: moment(d).format('YYYY-MM-DD HH:mm:ss'),
     };
   },
 });

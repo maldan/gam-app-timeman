@@ -18,3 +18,9 @@ type Sleep struct {
 	Start       time.Time `json:"start"`
 	Stop        time.Time `json:"stop"`
 }
+
+type Config struct {
+	ActivityColor map[string]string `json:"activityColor"`
+}
+
+var AppConfig = Config{}

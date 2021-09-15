@@ -17,6 +17,13 @@
               width: x.duration * 100 + '%',
             }"
           ></div>
+          <div
+            class="current"
+            v-if="isToday && new Date().getHours() === i"
+            :style="{ left: (new Date().getMinutes() / 60) * 100 + '%' }"
+          >
+            |
+          </div>
         </div>
       </div>
     </div>
@@ -58,9 +65,8 @@ export default defineComponent({
   },
   components: { Add, Edit, Task },
   async mounted() {
+    this.color = (await RestApi.config.get())?.activityColor || {};
     this.refresh();
-    // @ts-ignore
-    // this.$root.refresh();
   },
   watch: {
     date(value: Date) {
@@ -118,6 +124,8 @@ export default defineComponent({
           }
         }
       }
+
+      this.isToday = Moment(this.date).format('YYYY-MM-DD') === Moment().format('YYYY-MM-DD');
     },
     async remove(item: any) {
       if (confirm('Are you sure you want to delete it?')) {
@@ -131,15 +139,16 @@ export default defineComponent({
     return {
       isShowAddForm: false,
       isShowEditForm: false,
+      isToday: false,
       itemId: '',
 
       hourMap: [] as any[],
       list: [] as any[],
 
       color: {
-        programming: '#b404ca',
+        /*programming: '#b404ca',
         draw: '#af2222',
-        language: '#e68a02',
+        language: '#e68a02',*/
       } as any,
     };
   },
@@ -187,6 +196,13 @@ export default defineComponent({
           align-items: center;
           height: 100%;
           background: #414141;
+          font-weight: bold;
+        }
+
+        .current {
+          position: absolute;
+          top: -4px;
+          color: #fe0000;
           font-weight: bold;
         }
       }

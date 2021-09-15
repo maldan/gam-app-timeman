@@ -6,5 +6,5 @@ go 1.16
 
 require (
 	github.com/maldan/go-cmhp v0.0.17
-	github.com/maldan/go-restserver v1.2.11
+	github.com/maldan/go-restserver v1.2.12
 )

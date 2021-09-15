@@ -7,8 +7,13 @@ import (
 
 	"github.com/maldan/gam-app-timeman/internal/app/timeman/api"
 	"github.com/maldan/gam-app-timeman/internal/app/timeman/core"
+	"github.com/maldan/go-cmhp/cmhp_file"
 	"github.com/maldan/go-restserver"
 )
+
+func init() {
+	cmhp_file.ReadJSON(core.DataDir+"/config.json", &core.AppConfig)
+}
 
 func Start(frontFs embed.FS) {
 	// Server
@@ -41,6 +46,9 @@ func Start(frontFs embed.FS) {
 		"/api": map[string]interface{}{
 			"task":  api.TaskApi{},
 			"sleep": api.SleepApi{},
+		},
+		"/system": map[string]interface{}{
+			"config": api.ConfigApi{},
 		},
 	})
 }
