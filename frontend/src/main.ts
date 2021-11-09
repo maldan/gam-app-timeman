@@ -13,4 +13,5 @@ import './main.scss';
 
   await Store.dispatch('activity/getList');
   await Store.dispatch('task/setDate', new Date());
+  await Store.dispatch('sleep/setDate', new Date());
 })();

@@ -57,9 +57,7 @@ export default defineComponent({
   async mounted() {},
   methods: {},
   data: () => {
-    return {
-      currentDate: new Date(),
-    };
+    return {};
   },
 });
 </script>

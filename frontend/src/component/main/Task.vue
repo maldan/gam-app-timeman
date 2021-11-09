@@ -23,14 +23,14 @@
           <ui-button
             @click="
               $store.dispatch('modal/show', {
-                name: 'add/work',
+                name: 'add/task',
                 data: {
                   ...item,
                   start: $root.moment(item.start).format('YYYY-MM-DD HH:mm:ss'),
                   stop: $root.moment(item.stop).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 onSuccess: () => {
-                  $store.dispatch('work/add');
+                  $store.dispatch('task/add');
                 },
               })
             "
@@ -41,14 +41,12 @@
           <ui-button
             @click="
               $store.dispatch('modal/show', {
-                name: 'edit/work',
+                name: 'edit/task',
                 data: {
                   ...item,
-                  //start: $root.moment(item.start).format('YYYY-MM-DD HH:mm:ss'),
-                  //stop: $root.moment(item.stop).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 onSuccess: () => {
-                  $store.dispatch('work/update');
+                  $store.dispatch('task/update');
                 },
               })
             "
@@ -64,7 +62,7 @@
                   title: 'Remove this task?',
                 },
                 onSuccess: () => {
-                  $store.dispatch('work/remove', item.id);
+                  $store.dispatch('task/remove', item.id);
                 },
               })
             "

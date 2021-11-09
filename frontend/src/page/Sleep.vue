@@ -1,22 +1,60 @@
 <template>
-  <div class="main">
-    <Header />
+  <div :class="$style.main">
+    <ui-block title="hour map">
+      <HourMap />
+    </ui-block>
 
-    <div class="main_body">
-      <History :date="currentDate" @update="description = $event" />
-      <Schedule @select="(currentDate = $event), refresh()" />
-    </div>
+    <ui-block
+      :class="$style.block"
+      title="history"
+      icon="plus"
+      :scrollY="true"
+      @iconClick="
+        $store.dispatch('modal/show', {
+          name: 'add/task',
+          data: {
+            name: '',
+            description: '',
+            start: $root.moment($store.state.sleep.date).format('YYYY-MM-DD HH:mm:ss'),
+            stop: $root.moment($store.state.sleep.date).format('YYYY-MM-DD HH:mm:ss'),
+          },
+          onSuccess: () => {
+            $store.dispatch('task/add');
+          },
+        })
+      "
+    >
+      <div class="task" v-for="(x, i) in $store.state.sleep.history" :key="x">
+        <Task
+          :item="x"
+          :nextItem="$store.state.sleep.history[i + 1]"
+          :date="$store.state.sleep.date"
+        />
+      </div>
+    </ui-block>
+
+    <ui-block title="schedule">
+      <ui-schedule
+        :map="$store.state.sleep.yearMap"
+        :max="28800"
+        :date="$store.state.sleep.date"
+        :yearRange="[-4, -3, -2, -1, 0]"
+        formatValue="time"
+        color="#ae11cb"
+        @select="$store.dispatch('sleep/setDate', $event)"
+      />
+    </ui-block>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Header from '../component/Header.vue';
-import History from '../component/sleep/History.vue';
-import Schedule from '../component/sleep/Schedule.vue';
+import HourMap from '../component/sleep/HourMap.vue';
 
 export default defineComponent({
-  components: { Header, History, Schedule },
+  components: {
+    HourMap,
+  },
   async mounted() {
     this.refresh();
   },
@@ -31,16 +69,20 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style module lang="scss">
+@import '../gam_sdk_ui/vue/style/size.scss';
+@import '../gam_sdk_ui/vue/style/color.scss';
+
 .main {
   box-sizing: border-box;
-  height: 100%;
-  padding: 10px;
+  display: grid;
+  height: calc(100% - 48px);
+  gap: $gap-base;
+  grid-template-columns: 200px 340px 1fr;
+  padding: $gap-base;
 
-  .main_body {
-    margin-top: 10px;
-    display: flex;
-    height: calc(100% - 60px);
+  .block {
+    min-height: 0;
   }
 }
 </style>
