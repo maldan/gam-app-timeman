@@ -8,7 +8,10 @@ import (
 	"github.com/maldan/gam-app-timeman/internal/app/timeman/api"
 	"github.com/maldan/gam-app-timeman/internal/app/timeman/core"
 	"github.com/maldan/go-cmhp/cmhp_file"
-	"github.com/maldan/go-restserver"
+	"github.com/maldan/go-rapi"
+	"github.com/maldan/go-rapi/rapi_core"
+	"github.com/maldan/go-rapi/rapi_rest"
+	"github.com/maldan/go-rapi/rapi_vfs"
 )
 
 func init() {
@@ -29,26 +32,27 @@ func Start(frontFs embed.FS) {
 	// Set
 	core.DataDir = *dataDir
 
-	/*m := make([]core.Sleep, 0)
-	cmhp_file.ReadJSON("./sleep.json", &m)
-	fff := api.SleepApi{}
-	for _, xx := range m {
-		loc, _ := time.LoadLocation("Europe/Moscow")
-		xx.Start = xx.Start.In(loc)
-		xx.Stop = xx.Stop.In(loc)
-		fff.PostIndex(xx)
-	}
-	fmt.Println(2)*/
-
-	// Init server
-	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
-		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
-		"/api": map[string]interface{}{
-			"task":  api.TaskApi{},
-			"sleep": api.SleepApi{},
+	// Start server
+	rapi.Start(rapi.Config{
+		Host: fmt.Sprintf("%s:%d", *host, *port),
+		Router: map[string]rapi_core.Handler{
+			"/": rapi_vfs.VFSHandler{
+				Root: "frontend/build",
+				Fs:   frontFs,
+			},
+			"/api": rapi_rest.ApiHandler{
+				Controller: map[string]interface{}{
+					"task":     api.TaskApi{},
+					"sleep":    api.SleepApi{},
+					"activity": api.ActivityApi{},
+				},
+			},
+			"/system": rapi_rest.ApiHandler{
+				Controller: map[string]interface{}{
+					"config": api.ConfigApi{},
+				},
+			},
 		},
-		"/system": map[string]interface{}{
-			"config": api.ConfigApi{},
-		},
+		DbPath: core.DataDir,
 	})
 }

@@ -18,19 +18,61 @@
     <div :class="$style.body">
       <div :class="$style.name">
         <div v-html="item.description.replace(/\n/g, '<br>')"></div>
-        <img
-          @click="$emit('edit', item.id)"
-          class="clickable"
-          src="../../asset/pencil.svg"
-          alt=""
-          style="margin-left: auto"
-        />
-        <img
-          @click="$emit('delete', item.id)"
-          class="clickable"
-          src="../../asset/trash.svg"
-          alt=""
-        />
+
+        <div :class="$style.icons">
+          <ui-button
+            @click="
+              $store.dispatch('modal/show', {
+                name: 'add/work',
+                data: {
+                  ...item,
+                  start: $root.moment(item.start).format('YYYY-MM-DD HH:mm:ss'),
+                  stop: $root.moment(item.stop).format('YYYY-MM-DD HH:mm:ss'),
+                },
+                onSuccess: () => {
+                  $store.dispatch('work/add');
+                },
+              })
+            "
+            :class="$style.button"
+            icon="copy"
+            size="compact-square"
+          />
+          <ui-button
+            @click="
+              $store.dispatch('modal/show', {
+                name: 'edit/work',
+                data: {
+                  ...item,
+                  //start: $root.moment(item.start).format('YYYY-MM-DD HH:mm:ss'),
+                  //stop: $root.moment(item.stop).format('YYYY-MM-DD HH:mm:ss'),
+                },
+                onSuccess: () => {
+                  $store.dispatch('work/update');
+                },
+              })
+            "
+            :class="$style.button"
+            icon="pencil"
+            size="compact-square"
+          />
+          <ui-button
+            @click="
+              $store.dispatch('modal/show', {
+                name: 'approve',
+                data: {
+                  title: 'Remove this task?',
+                },
+                onSuccess: () => {
+                  $store.dispatch('work/remove', item.id);
+                },
+              })
+            "
+            :class="$style.button"
+            icon="trash"
+            size="compact-square"
+          />
+        </div>
       </div>
     </div>
     <div :class="$style.gap" v-if="gap()">{{ gap() }}</div>
@@ -76,6 +118,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" module>
+@import '../../gam_sdk_ui/vue/style/size.scss';
+@import '../../gam_sdk_ui/vue/style/color.scss';
+
 .block {
   font-size: 15px;
   margin-bottom: 5px;
@@ -88,19 +133,19 @@ export default defineComponent({
     .right2 {
       padding: 5px 10px;
       border-radius: 6px 6px 0 0;
-      color: #b1b1b1;
-      background: #80808045;
+      color: $text-gray;
+      background: $gray-medium;
       font-weight: bold;
 
       span {
-        color: #bdbdbd;
+        color: $text-gray;
         font-style: italic;
         font-weight: 300;
       }
     }
 
     .left {
-      color: #7be01e;
+      color: $text-green;
     }
 
     .right {
@@ -108,23 +153,29 @@ export default defineComponent({
     }
 
     .right2 {
-      margin-left: 10px;
-      color: #caef58;
+      margin-left: $gap-base;
+      color: $text-green;
     }
   }
 
   .body {
-    padding: 10px 15px;
-    background: #80808045;
+    padding: $gap-base;
+    background: $gray-medium;
     border-radius: 0 0 6px 6px;
-    color: #b1b1b1;
+    color: $text-gray;
 
     .name {
       display: flex;
-      color: #ffe10c;
+      color: $text-gray;
 
-      img {
-        margin-left: 15px;
+      .icons {
+        margin-left: auto;
+        display: flex;
+
+        .button {
+          margin-left: $gap-base;
+          padding: 2px;
+        }
       }
     }
 
@@ -151,13 +202,13 @@ export default defineComponent({
   }
 
   .gap {
-    background: #80808045;
+    background: $gray-medium;
     padding: 3px 10px;
     text-align: center;
     border-radius: 4px;
     margin-top: 25px;
     margin-bottom: 25px;
-    color: #7be01e;
+    color: $text-green;
     position: relative;
     width: max-content;
     margin-left: auto;
@@ -168,7 +219,7 @@ export default defineComponent({
       position: absolute;
       left: 50%;
       top: -22px;
-      color: #828282;
+      color: $text-gray;
     }
 
     &::after {
@@ -176,7 +227,7 @@ export default defineComponent({
       position: absolute;
       left: 50%;
       bottom: -20px;
-      color: #828282;
+      color: $text-gray;
     }
   }
 }

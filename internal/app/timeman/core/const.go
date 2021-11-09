@@ -4,6 +4,11 @@ import "time"
 
 var DataDir = ""
 
+type Activity struct {
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
+
 type Task struct {
 	Id          string    `json:"id"`
 	Name        string    `json:"name"`
